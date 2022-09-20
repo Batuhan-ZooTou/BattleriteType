@@ -16,6 +16,7 @@ public class SkillLMB : MonoBehaviour
     public float radius; //radius of projectile
     public float castTime; //time to projectile spawn after input
     public float slowDownOncCasting; //slow down while casting
+    public float energyGain;
     private float castCounter; //timer
     [HideInInspector] public float coolDownCounter; //timer
     public float coolDown;
@@ -72,6 +73,7 @@ public class SkillLMB : MonoBehaviour
             projectile.GetComponent<ProjectileBehavior>()._speed = speed;
             projectile.GetComponent<ProjectileBehavior>()._maxRange = range;
             projectile.GetComponent<ProjectileBehavior>().playerCollider = player.playerCollider;
+        projectile.GetComponent<ProjectileBehavior>()._energyGain = energyGain;
         projectile.GetComponent<ProjectileBehavior>().projectileOwner = transform.gameObject;
             Physics.IgnoreCollision(player.playerCollider, projectile.GetComponent<Collider>(), true);
         }

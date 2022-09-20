@@ -21,6 +21,7 @@ public class SkillRMB : MonoBehaviour
     private float loopCount;
     public float delayAfterShots; //time between shots
     private float delayAfterShotsCounter;
+    public float energyGain;
     private float castCounter; //timer
     [HideInInspector] public float coolDownCounter; //timer
     public GameObject skillIndicator;
@@ -127,6 +128,7 @@ public class SkillRMB : MonoBehaviour
         projectile.GetComponent<ProjectileBehavior>()._maxRange = range;
         projectile.GetComponent<ProjectileBehavior>().playerCollider = player.playerCollider;
         projectile.GetComponent<ProjectileBehavior>().projectileOwner = transform.gameObject;
+        projectile.GetComponent<ProjectileBehavior>()._energyGain = energyGain;
 
         Physics.IgnoreCollision(player.playerCollider, projectile.GetComponent<Collider>(), true);
     }

@@ -26,6 +26,7 @@ namespace StarterAssets
 		public bool cursorInputForLook = true;
 
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
+
         public void OnMove(InputValue value)
 		{
 			MoveInput(value.Get<Vector2>());
@@ -62,7 +63,7 @@ namespace StarterAssets
 		}
 		public void	OnSkillQ()
         {
-            if (holdinShift)
+            if (holdinShift && player.skillShiftQ.energyRequirment<=player.playerSO.currentEnergy)
             {
 				if (!player.skillShiftQ.onAction && !delayAfterCancel && player.playerControllStates != PlayerControllStates.Stunned)
 				{
@@ -90,7 +91,7 @@ namespace StarterAssets
 		}
 		public void OnSkillSpace()
 		{
-            if (holdinShift)
+            if (holdinShift && player.skillShiftSpace.energyRequirment <= player.playerSO.currentEnergy)
             {
 				if (!player.skillShiftSpace.onAction && !delayAfterCancel && player.playerControllStates != PlayerControllStates.Stunned)
 				{
@@ -116,7 +117,7 @@ namespace StarterAssets
 		}
 		public void OnSkillF()
 		{
-			if (!player.skillF.onAction && !delayAfterCancel && player.playerControllStates != PlayerControllStates.Stunned)
+			if (!player.skillF.onAction && !delayAfterCancel && player.playerControllStates != PlayerControllStates.Stunned && player.skillF.energyRequirment <= player.playerSO.currentEnergy)
 			{
 				if (!player.skillF.onCooldown)
 				{
@@ -127,7 +128,7 @@ namespace StarterAssets
 		}
 		public void OnSkillR()
 		{
-			if (!player.skillR.onAction && !delayAfterCancel && player.playerControllStates != PlayerControllStates.Stunned)
+			if (!player.skillR.onAction && !delayAfterCancel && player.playerControllStates != PlayerControllStates.Stunned && player.skillR.energyRequirment <= player.playerSO.currentEnergy)
 			{
 				if (!player.skillSpace.onCooldown)
 				{

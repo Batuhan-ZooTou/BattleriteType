@@ -14,6 +14,7 @@ public class SkillShiftSpace : MonoBehaviour
     public float buffTime;
     public float slowDownOncCasting; //percentage
     public float coolDown;
+    public float energyRequirment;
     public float speed;
     public float knockbackPower;
     public bool jumped;
@@ -101,6 +102,7 @@ public class SkillShiftSpace : MonoBehaviour
             jumped = true;
             player._input.actionCancel = false;
             player._input.onAction = false;
+            player.playerSO.UpdateCurrentEnergy(-energyRequirment);
 
         }
     }

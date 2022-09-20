@@ -7,8 +7,11 @@ public class PlayerSO : ScriptableObject
     public float currentMaxHp;
     public float currentHp;
     public float currentActionProgress;
+    public float currentEnergy;
+    public float maxEnergy;
     [System.NonSerialized]
     public UnityEvent<float> takeDamageEvent;
+    public UnityEvent<float> dealDamageEvent;
     public UnityEvent<float> updateCurrentMaxHpEvent;
     public UnityEvent<float> updateActionProgress;
     public UnityEvent<float> updateActionProgressMax;
@@ -19,6 +22,7 @@ public class PlayerSO : ScriptableObject
         currentMaxHp = maxHp;
         currentHp = currentMaxHp;
         currentActionProgress = 0;
+        currentEnergy = 0;
         if (takeDamageEvent==null)
         {
             takeDamageEvent = new UnityEvent<float>();
@@ -34,6 +38,10 @@ public class PlayerSO : ScriptableObject
         if (updateActionProgressMax == null)
         {
             updateActionProgressMax = new UnityEvent<float>();
+        }
+        if (dealDamageEvent == null)
+        {
+            dealDamageEvent = new UnityEvent<float>();
         }
     }
     public void UpdateCurrentHp(float value)
@@ -62,6 +70,11 @@ public class PlayerSO : ScriptableObject
     {
         updateActionProgressMax.Invoke(value);
     }
-
+    public void UpdateCurrentEnergy(float value)
+    {
+        currentEnergy += value;
+        currentEnergy = Mathf.Clamp(currentEnergy, 0, maxEnergy);
+        dealDamageEvent.Invoke(currentEnergy);
+    }
 
 }

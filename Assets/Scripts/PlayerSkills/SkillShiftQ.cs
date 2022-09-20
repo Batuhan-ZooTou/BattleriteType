@@ -17,6 +17,7 @@ public class SkillShiftQ : MonoBehaviour
     private float castCounter;
     public float slowDownOncCasting; //percentage
     public float coolDown;
+    public float energyRequirment;
     public float stunTime;
     [HideInInspector] public float coolDownCounter;
     public bool onCooldown;
@@ -81,6 +82,7 @@ public class SkillShiftQ : MonoBehaviour
             animator.enabled = true;
             onCooldown = true;
             player.skillQ.onCooldown = true;
+            player.playerSO.UpdateCurrentEnergy(-energyRequirment);
             player._input.actionCancel = false;
         }
     }
@@ -93,7 +95,10 @@ public class SkillShiftQ : MonoBehaviour
             yield return new WaitForFixedUpdate();
             foreach (IDamageable item in detectedDamageable.ToList())
             {
-                item.TakeDamage(damage, DamageTypes.Stun, stunTime);
+                if (item!=player.GetComponent<IDamageable>())
+                {
+                    item.TakeDamage(damage, DamageTypes.Stun, stunTime);
+                }
                 detectedDamageable.Remove(item);
             }
             gameObject.SetActive(false);

@@ -11,6 +11,7 @@ public class SkillR : MonoBehaviour
     public float radius;
     public float castTime;
     private float castCounter;
+    public float energyRequirment;
     public float liveTime;
     public float slowDownOncCasting; //percentage
     public float coolDown;
@@ -64,6 +65,7 @@ public class SkillR : MonoBehaviour
             player._input.actionCancel = false;
             player._input.onAction = false;
             StartCoroutine(LiveTime());
+            player.playerSO.UpdateCurrentEnergy(-energyRequirment);
         }
     }
     public IEnumerator LiveTime()

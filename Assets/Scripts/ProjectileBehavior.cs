@@ -8,6 +8,7 @@ public class ProjectileBehavior : MonoBehaviour
     public float _speed { private get; set; }
     private float defaultSpeed;
     public float _maxRange { private get; set; }
+    public float _energyGain { private get; set; }
     public DamageTypes Type { private get; set; }
 
     public GameObject projectileOwner;
@@ -51,9 +52,14 @@ public class ProjectileBehavior : MonoBehaviour
         IDamageable damageable = other.GetComponent<IDamageable>();
         if (damageable != null)
         {
-            if (Type==DamageTypes.LifeSteal)
+            
+            if (projectileOwner.GetComponent<ThirdPersonController>()!=null)
             {
-                projectileOwner.GetComponent<ThirdPersonController>().playerSO.UpdateCurrentHp(_damage);
+                projectileOwner.GetComponent<ThirdPersonController>().playerSO.UpdateCurrentEnergy(_energyGain);
+                if (Type == DamageTypes.LifeSteal)
+                {
+                    projectileOwner.GetComponent<ThirdPersonController>().playerSO.UpdateCurrentHp(_damage);
+                }
             }
             damageable.TakeDamage(_damage, Type, 0);
             objectPooler.AddToPool(this.gameObject);
@@ -62,17 +68,29 @@ public class ProjectileBehavior : MonoBehaviour
         {
             if (areaField.boubleType==Bouble.BoubleType.Pearl)
             {
-                defaultSpeed = _speed;
-                _speed *= areaField.speed / 100;
+                if (areaField.owner!= projectileOwner)
+                {
+                    defaultSpeed = _speed;
+                    _speed *= areaField.speed / 100;
+                }
             }
            else if (areaField.boubleType == Bouble.BoubleType.Oldur && turned==false)
            {
-                turned = true;
-                transform.Rotate(transform.rotation.x + 180, transform.rotation.y, transform.rotation.z);
+                if (areaField.owner != projectileOwner)
+                {
+                    turned = true;
+                    Physics.IgnoreCollision(projectileOwner.GetComponent<Collider>(), transform.gameObject.GetComponent<Collider>(), false);
+                    projectileOwner = areaField.owner;
+                    Physics.IgnoreCollision(projectileOwner.GetComponent<Collider>(), transform.gameObject.GetComponent<Collider>(), true);
+                    transform.Rotate(transform.rotation.x + 180, transform.rotation.y, transform.rotation.z);
+                }
            }
             else if (areaField.boubleType == Bouble.BoubleType.Ashka )
             {
-                objectPooler.AddToPool(this.gameObject);
+                if (areaField.owner != projectileOwner)
+                {
+                    objectPooler.AddToPool(this.gameObject);
+                }
             }
         }
         if (other.gameObject.CompareTag("Wall"))
@@ -86,7 +104,10 @@ public class ProjectileBehavior : MonoBehaviour
         {
             if (areaField.boubleType == Bouble.BoubleType.Oldur)
             {
-                _speed -= Time.deltaTime*areaField.speed;
+                if (turned)
+                {
+                    _speed -= Time.deltaTime * areaField.speed;
+                }
             }
         }
     }
@@ -96,7 +117,10 @@ public class ProjectileBehavior : MonoBehaviour
         {
             if (areaField.boubleType == Bouble.BoubleType.Pearl)
             {
-                _speed =defaultSpeed;
+                if (areaField.owner != projectileOwner)
+                {
+                    _speed = defaultSpeed;
+                }
             }
         }
     }

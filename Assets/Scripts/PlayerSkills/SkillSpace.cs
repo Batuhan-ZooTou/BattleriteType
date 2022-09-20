@@ -17,6 +17,7 @@ public class SkillSpace : MonoBehaviour
     public float speed;
     public float knockbackPower;
     public bool jumped;
+    public float energyGain;
     private Vector3 jumpedPos;
     [HideInInspector] public float coolDownCounter;
     public bool onCooldown;
@@ -50,6 +51,7 @@ public class SkillSpace : MonoBehaviour
                         _dir.y = 0.01f;
                         item.transform.GetComponent<DummyTarget>().TakeDamage(damage,DamageTypes.Normal,0);
                         item.transform.GetComponent<DummyTarget>().GetKnockBack(_dir.normalized, knockbackPower);
+                        player.playerSO.UpdateCurrentEnergy(energyGain);
                     }
                 }
             }

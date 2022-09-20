@@ -19,6 +19,7 @@ public class SkillQ : MonoBehaviour
     public float slowDownOncCasting; //percentage
     public float coolDown;
     public float stunTime;
+    public float energyGain;
     [HideInInspector]public float coolDownCounter;
     public bool onCooldown;
 
@@ -91,8 +92,13 @@ public class SkillQ : MonoBehaviour
             yield return new WaitForFixedUpdate();
             foreach (IDamageable item in detectedDamageable.ToList())
             {
-                item.TakeDamage(damage, DamageTypes.Stun, stunTime);
+                if (item != player.GetComponent<IDamageable>())
+                {
+                    item.TakeDamage(damage, DamageTypes.Stun, stunTime);
+                }
                 detectedDamageable.Remove(item);
+                player.playerSO.UpdateCurrentEnergy(energyGain);
+
             }
             gameObject.SetActive(false);
         }

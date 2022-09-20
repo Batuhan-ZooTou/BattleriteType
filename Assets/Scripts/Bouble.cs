@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Bouble : MonoBehaviour
 {
+    public GameObject owner;
     public enum BoubleType
     {
         Pearl,

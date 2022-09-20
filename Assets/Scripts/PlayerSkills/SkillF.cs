@@ -15,6 +15,7 @@ public class SkillF : MonoBehaviour
     public float coolDown;
     public float speed;
     public float knockbackPower;
+    public float energyRequirment;
     public bool jumped;
     private Vector3 startPos;
     private Vector3 _dir;
@@ -91,6 +92,7 @@ public class SkillF : MonoBehaviour
             startPos = player.transform.position;
             jumped = true;
             player._input.actionCancel = false;
+            player.playerSO.UpdateCurrentEnergy(-energyRequirment);
             player._input.onAction = false;
         }
     }

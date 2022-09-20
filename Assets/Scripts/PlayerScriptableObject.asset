@@ -13,8 +13,20 @@ MonoBehaviour:
   m_Name: PlayerScriptableObject
   m_EditorClassIdentifier: 
   maxHp: 220
-  currentMaxHp: 164
-  currentHp: 124
+  currentMaxHp: 220
+  currentHp: 220
+  currentActionProgress: 0
+  currentEnergy: 0
+  maxEnergy: 100
+  dealDamageEvent:
+    m_PersistentCalls:
+      m_Calls: []
   updateCurrentMaxHpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  updateActionProgress:
+    m_PersistentCalls:
+      m_Calls: []
+  updateActionProgressMax:
     m_PersistentCalls:
       m_Calls: []

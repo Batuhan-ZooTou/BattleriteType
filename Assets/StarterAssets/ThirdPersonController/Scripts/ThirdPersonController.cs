@@ -95,7 +95,6 @@ namespace StarterAssets
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
-            AssignAnimationIDs();
         }
         private void FixedUpdate()
         {
@@ -215,11 +214,6 @@ namespace StarterAssets
             yield return new WaitForSeconds(delayAfterCancelTimer);
             _input.delayAfterCancel = false;
         }
-        private void AssignAnimationIDs()
-        {
-            _animIDSpeed = Animator.StringToHash("Speed");
-            _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
-        }
         private void Move()
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
@@ -260,20 +254,11 @@ namespace StarterAssets
             movement *= _speed * Time.deltaTime;
             float velocityZ = Vector3.Dot(movement.normalized, transform.forward);
             float velocityX = Vector3.Dot(movement.normalized, transform.right);
-            //float velocityX = Mathf.Clamp(_input.move.x, -1, 1);
-            //float velocityZ = Mathf.Clamp(_input.move.y,-1,1);
             _animator.SetFloat("VelocityZ", velocityZ, 0.1f, Time.deltaTime);
             _animator.SetFloat("VelocityX", velocityX, 0.1f, Time.deltaTime);
 
-            // move the player
-            //rb.MovePosition(transform.position + inputDirection.normalized * (_speed * Time.deltaTime));
             rb.velocity = new Vector3(inputDirection.normalized.x * _speed , 0, inputDirection.normalized.z * _speed );
-            // update animator if using character
-           //if (_hasAnimator)
-           //{
-           //    _animator.SetFloat(_animIDSpeed, _animationBlend);
-           //    _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
-           //}
+     
         }
         private void LockCam()
         {
@@ -314,32 +299,5 @@ namespace StarterAssets
                 playerSO.UpdateCurrentMaxHp(playerSO.currentHp+40);
             }
         }
-        
-        private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
-        {
-            if (lfAngle < -360f) lfAngle += 360f;
-            if (lfAngle > 360f) lfAngle -= 360f;
-            return Mathf.Clamp(lfAngle, lfMin, lfMax);
-        }
-        private void OnFootstep(AnimationEvent animationEvent)
-        {
-            if (animationEvent.animatorClipInfo.weight > 0.5f)
-            {
-                if (FootstepAudioClips.Length > 0)
-                {
-                    var index = Random.Range(0, FootstepAudioClips.Length);
-                    AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(transform.position), FootstepAudioVolume);
-                }
-            }
-        }
-
-        private void OnLand(AnimationEvent animationEvent)
-        {
-            if (animationEvent.animatorClipInfo.weight > 0.5f)
-            {
-                AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(transform.position), FootstepAudioVolume);
-            }
-        }
-        
     }
 }

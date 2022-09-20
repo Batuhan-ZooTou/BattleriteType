@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Slider dummyCurrentHp;
     [SerializeField] private Slider dummyCurrentMaxHp;
     [SerializeField] private Slider dummyCurrentEffect;
+    [SerializeField] private Slider currentEnergy;
     [SerializeField] PlayerSO playerSO;
     [SerializeField] DummyTarget dummyTarget;
     [SerializeField] private Slider currentActionProgress;
@@ -27,6 +28,7 @@ public class UIManager : MonoBehaviour
         ChangeCurrentDummyMaxHpValue(dummyTarget.currentMaxHp);
         ChangeDummyEffectValue(0);
         ChangeDummyEffectMaxValue(0);
+        ChangeCurrentEnergyValue(0);
     }
 
     private void OnEnable()
@@ -35,6 +37,7 @@ public class UIManager : MonoBehaviour
         playerSO.updateCurrentMaxHpEvent.AddListener(ChangeCurrentMaxHpValue);
         playerSO.updateActionProgress.AddListener(ChangeActionProgressValue);
         playerSO.updateActionProgressMax.AddListener(ChangeActionProgressMaxValue);
+        playerSO.dealDamageEvent.AddListener(ChangeCurrentEnergyValue);
 
         dummyTarget.takeDamageEvent.AddListener(ChangeCurrentDummyHpValue);
         dummyTarget.updateCurrentMaxHpEvent.AddListener(ChangeCurrentDummyMaxHpValue);
@@ -47,6 +50,7 @@ public class UIManager : MonoBehaviour
         playerSO.updateCurrentMaxHpEvent.RemoveListener(ChangeCurrentMaxHpValue);
         playerSO.updateActionProgress.RemoveListener(ChangeActionProgressValue);
         playerSO.updateActionProgressMax.RemoveListener(ChangeActionProgressMaxValue);
+        playerSO.dealDamageEvent.RemoveListener(ChangeCurrentEnergyValue);
 
         dummyTarget.takeDamageEvent.RemoveListener(ChangeCurrentDummyHpValue);
         dummyTarget.updateCurrentMaxHpEvent.RemoveListener(ChangeCurrentDummyMaxHpValue);
@@ -86,5 +90,9 @@ public class UIManager : MonoBehaviour
     public void ChangeDummyEffectMaxValue(float value)
     {
         dummyCurrentEffect.maxValue = value;
+    }
+    public void ChangeCurrentEnergyValue(float value)
+    {
+        currentEnergy.value = value;
     }
 }
