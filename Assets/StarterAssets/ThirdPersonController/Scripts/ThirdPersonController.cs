@@ -35,13 +35,17 @@ namespace StarterAssets
         public bool LockCameraPosition = false;
 
         private DamageTypes damageType;
-        public PlayerControllStates playerControllStates;
+        public PlayerDebuffs playerControllStates;
+        public PlayerHardCC playerHardCC;
         public PlayerBuffs playerBuffs;
+
         [HideInInspector]public float CCtimer;
         public float delayAfterCancelTimer=0.2f;
         public CameraFollow cam;
         public bool speedChanged=false;
         public PlayerSO playerSO;
+
+
         public SkillQ skillQ;
         public SkillRMB skillRMB;
         public SkillLMB skillLMB;
@@ -53,9 +57,14 @@ namespace StarterAssets
         public SkillShiftQ skillShiftQ;
 
         // player
+        [HideInInspector]public Vector3 dir;
         private float _speed;
         private float _animationBlend;
 
+        [SerializeField]private float hardCCcounter;
+        private float deBuffcounter;
+        private float buffcounter;
+        private int effectOnPlayerCount;
         // animation IDs
         private int _animIDSpeed;
         private int _animIDMotionSpeed;
@@ -71,7 +80,7 @@ namespace StarterAssets
 
 
         private bool _hasAnimator;
-
+        
         private bool IsCurrentDeviceMouse
         {
             get
@@ -115,7 +124,7 @@ namespace StarterAssets
                 case DamageTypes.None:
                     break;
                 case DamageTypes.Normal:
-                    playerControllStates = PlayerControllStates.Normal;
+                    playerControllStates = PlayerDebuffs.Normal;
                     playerSO.UpdateCurrentHp(-amount);
                     ClampHpValues();
                     CCtimer = debuffTime;
@@ -124,7 +133,8 @@ namespace StarterAssets
                     ClampHpValues();
                     break;
                 case DamageTypes.Stun:
-                    playerControllStates = PlayerControllStates.Stunned;
+                    effectOnPlayerCount++;
+                    playerControllStates = PlayerDebuffs.Stunned;
                     playerSO.UpdateCurrentHp(-amount);
                     ClampHpValues();
                     CCtimer = debuffTime;
@@ -136,32 +146,94 @@ namespace StarterAssets
         {
             switch (playerControllStates)
             {
-                case PlayerControllStates.None:
+                case PlayerDebuffs.None:
                     speedChanged = false;
                     break;
-                case PlayerControllStates.Stunned:
+                case PlayerDebuffs.Stunned:
                     ChangedSpeed = 0;
                     _speed = 0;
                     speedChanged = true;
                     yield return new WaitForSeconds(time);
-                    playerControllStates = PlayerControllStates.None;
+                    playerControllStates = PlayerDebuffs.None;
                     speedChanged = false;
                     CCtimer = 0;
                     break;
-                case PlayerControllStates.Silenced:
+                case PlayerDebuffs.Silenced:
                     yield return new WaitForSeconds(time);
-                    playerControllStates = PlayerControllStates.None;
+                    playerControllStates = PlayerDebuffs.None;
                     break;
-                case PlayerControllStates.Slowed:
+                case PlayerDebuffs.Snared:
                     speedChanged = true;
                     yield return new WaitForSeconds(time);
-                    playerControllStates = PlayerControllStates.None;
+                    playerControllStates = PlayerDebuffs.None;
                     speedChanged = false;
                     CCtimer = 0;
                     break;
-                case PlayerControllStates.DamagedOvertime:
+                case PlayerDebuffs.DamagedOvertime:
                     yield return new WaitForSeconds(time);
-                    playerControllStates = PlayerControllStates.None;
+                    playerControllStates = PlayerDebuffs.None;
+                    break;
+            }
+        }
+        public void ClearHardCC(float time)
+        {
+            switch (playerHardCC)
+            {
+                case PlayerHardCC.None:
+                    break;
+                case PlayerHardCC.Normal:
+                    hardCCcounter = 0;
+                    effectOnPlayerCount = 0;
+                    break;
+                case PlayerHardCC.Stunned:
+                    if (hardCCcounter == 0)
+                    {
+                        Debug.Log("1");
+                    }
+                    else if (hardCCcounter >= time)
+                    {
+                        hardCCcounter = 0;
+                        playerHardCC = PlayerHardCC.Normal;
+                    }
+                    hardCCcounter += Time.deltaTime;
+                    break;
+                case PlayerHardCC.Incapacitated:
+                    if (hardCCcounter == 0)
+                    {
+                        Debug.Log("1");
+                    }
+                    else if (hardCCcounter >= time)
+                    {
+                        hardCCcounter = 0;
+                        playerHardCC = PlayerHardCC.Normal;
+                    }
+                    hardCCcounter += Time.deltaTime;
+                    break;
+                case PlayerHardCC.Paniced:
+                    if (hardCCcounter == 0)
+                    {
+                        Debug.Log("1");
+                    }
+                    else if(hardCCcounter >= time)
+                    {
+                        hardCCcounter = 0;
+                        playerHardCC = PlayerHardCC.Normal;
+                    }
+                    hardCCcounter += Time.deltaTime;
+                    break;
+                case PlayerHardCC.Petrified:
+                    if (hardCCcounter == 0)
+                    {
+                        Debug.Log("1");
+                    }
+                    else if (hardCCcounter >= time)
+                    {
+                        hardCCcounter = 0;
+                        playerHardCC = PlayerHardCC.Normal;
+                    }
+                    hardCCcounter += Time.deltaTime;
+                    break;
+                default:
                     break;
             }
         }
@@ -173,25 +245,25 @@ namespace StarterAssets
                     break;
                 case PlayerBuffs.Normal:
                     yield return new WaitForSeconds(time);
-                    playerControllStates = PlayerControllStates.None;
+                    playerControllStates = PlayerDebuffs.None;
                     break;
                 case PlayerBuffs.SpeedUp:
                     yield return new WaitForSeconds(time);
-                    playerControllStates = PlayerControllStates.None;
+                    playerControllStates = PlayerDebuffs.None;
                     break;
                 case PlayerBuffs.LifeSteal:
                     skillLMB.bulletType = DamageTypes.LifeSteal;
                     yield return new WaitForSeconds(time);
-                    playerControllStates = PlayerControllStates.None;
+                    playerControllStates = PlayerDebuffs.None;
                     skillLMB.bulletType = DamageTypes.Normal;
                     break;
                 case PlayerBuffs.AtkBoost:
                     yield return new WaitForSeconds(time);
-                    playerControllStates = PlayerControllStates.None;
+                    playerControllStates = PlayerDebuffs.None;
                     break;
                 case PlayerBuffs.DamageReduction:
                     yield return new WaitForSeconds(time);
-                    playerControllStates = PlayerControllStates.None;
+                    playerControllStates = PlayerDebuffs.None;
                     break;
                 default:
                     break;
@@ -207,7 +279,11 @@ namespace StarterAssets
             {
                 StartCoroutine(CancelDelay());
             }
-            
+            //if (effectOnPlayerCount>0)
+            //{
+            //    ClearHardCC(CCtimer);
+            //}
+
         }
         public IEnumerator CancelDelay()
         {
@@ -248,7 +324,7 @@ namespace StarterAssets
             if (_animationBlend < 0.01f) _animationBlend = 0f;
 
             // normalise input direction
-            Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+            dir = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
             Vector3 movement = new Vector3(_input.move.x, 0.0f, _input.move.y);
             movement.Normalize();
             movement *= _speed * Time.deltaTime;
@@ -257,7 +333,7 @@ namespace StarterAssets
             _animator.SetFloat("VelocityZ", velocityZ, 0.1f, Time.deltaTime);
             _animator.SetFloat("VelocityX", velocityX, 0.1f, Time.deltaTime);
 
-            rb.velocity = new Vector3(inputDirection.normalized.x * _speed , 0, inputDirection.normalized.z * _speed );
+            rb.velocity = new Vector3(dir.normalized.x * _speed , 0, dir.normalized.z * _speed );
      
         }
         private void LockCam()
@@ -298,6 +374,31 @@ namespace StarterAssets
             {
                 playerSO.UpdateCurrentMaxHp(playerSO.currentHp+40);
             }
+        }
+
+        void IDamageable.GetHardCC(PlayerHardCC type, float DebuffTime, float amount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        void IDamageable.GetDeBuffed(PlayerDebuffs type, float DebuffTime, float amount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        void IDamageable.GetBuffed(PlayerBuffs type, float DebuffTime, float amount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        void IDamageable.DamageOverTime(float amount, int tick, float tickRate)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        void IDamageable.Knockback(Vector3 _dir, float strength)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

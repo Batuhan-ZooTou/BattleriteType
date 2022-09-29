@@ -36,7 +36,7 @@ public class SkillLMB : MonoBehaviour
         {
             if (castCounter == castTime)
             {
-                player.playerControllStates = PlayerControllStates.Slowed;
+                player.playerControllStates = PlayerDebuffs.Snared;
                 StartCoroutine(player.ClearDamageEffects(castTime));
             }
             castCounter -= Time.deltaTime;
@@ -48,7 +48,7 @@ public class SkillLMB : MonoBehaviour
         if (player._input.actionCancel && onAction && castCounter != castTime)
         {
             StopCoroutine(player.ClearDamageEffects(castTime));
-            player.playerControllStates = PlayerControllStates.None;
+            player.playerControllStates = PlayerDebuffs.None;
             StartCoroutine(player.ClearDamageEffects(0));
             player._input.onAction = false;
             castCounter = castTime;

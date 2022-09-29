@@ -12,6 +12,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Slider dummyCurrentMaxHp;
     [SerializeField] private Slider dummyCurrentEffect;
     [SerializeField] private Slider currentEnergy;
+    [SerializeField] private TextMeshProUGUI currentEffectName;
+    [SerializeField] private Slider currentEffect;
     [SerializeField] PlayerSO playerSO;
     [SerializeField] DummyTarget dummyTarget;
     [SerializeField] private Slider currentActionProgress;

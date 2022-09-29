@@ -31,7 +31,7 @@ public class SkillR : MonoBehaviour
         {
             if (castCounter == castTime)
             {
-                player.playerControllStates = PlayerControllStates.Slowed;
+                player.playerControllStates = PlayerDebuffs.Snared;
                 StartCoroutine(player.ClearDamageEffects(castTime));
             }
             castCounter -= Time.deltaTime;
@@ -44,7 +44,7 @@ public class SkillR : MonoBehaviour
         if (player._input.actionCancel && castCounter != castTime && onAction)
         {
             StopCoroutine(player.ClearDamageEffects(castTime));
-            player.playerControllStates = PlayerControllStates.None;
+            player.playerControllStates = PlayerDebuffs.None;
             player._input.onAction = false;
             onAction = false;
             castCounter = castTime;

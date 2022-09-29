@@ -5,10 +5,43 @@ using UnityEngine;
 public interface IDamageable
 {
     void TakeDamage(float amaount,DamageTypes type,float DebuffTime);
+    void GetHardCC(PlayerHardCC type, float DebuffTime, float amount);
+    void GetDeBuffed(PlayerDebuffs type, float DebuffTime,float amount);
+    void GetBuffed(PlayerBuffs type, float DebuffTime,float amount);
+    void DamageOverTime(float amount, int tick, float tickRate);
+    void Knockback(Vector3 dir, float strength);
 }
-public interface IKnockable
+
+public class DeBuffSlot
 {
-    void Knockback(Vector2 angle, float strength, int direction);
+
+    public PlayerDebuffs deBuffType;
+    public float time;
+    public float counter;
+    public float amount;
+
+    public DeBuffSlot(PlayerDebuffs _deBuffType, float _time,float _counter,float _amount)
+    {
+        deBuffType = _deBuffType;
+        time = _time;
+        counter = _counter;
+        amount = _amount;
+    }
+}
+public class BuffSlot
+{
+
+    public PlayerBuffs buffType;
+    public float time;
+    public float counter;
+    public float amount;
+    public BuffSlot(PlayerBuffs _buffType, float _time, float _counter, float _amount)
+    {
+        buffType = _buffType;
+        time = _time;
+        counter = _counter;
+        amount = _amount;
+    }
 }
 public enum DamageTypes
 {
@@ -18,16 +51,34 @@ public enum DamageTypes
     Silence,
     Slow,
     Overtime,
-    LifeSteal
+    LifeSteal,
+    HardCC,
+    DeBuff,
+    Buff,
 }
-public enum PlayerControllStates
+public enum PlayerDebuffs
 {
     None,
     Normal,
     Stunned,
     Silenced,
-    Slowed,
-    DamagedOvertime
+    Snared,
+    DamagedOvertime,
+    Weakened,
+    Blinded,
+    Rooted,
+    FadingSnared,
+    Disarm,
+    UsingSkill
+}
+public enum PlayerHardCC
+{
+    None,
+    Normal,
+    Stunned,
+    Incapacitated,
+    Paniced,
+    Petrified
 }
 public enum PlayerBuffs
 {
@@ -36,5 +87,6 @@ public enum PlayerBuffs
     SpeedUp,
     LifeSteal,
     AtkBoost,
-    DamageReduction
+    DamageReduction,
+    Healing
 }

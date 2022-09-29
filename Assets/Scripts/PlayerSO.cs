@@ -9,12 +9,14 @@ public class PlayerSO : ScriptableObject
     public float currentActionProgress;
     public float currentEnergy;
     public float maxEnergy;
+    public float currentEffect;
     [System.NonSerialized]
     public UnityEvent<float> takeDamageEvent;
     public UnityEvent<float> dealDamageEvent;
     public UnityEvent<float> updateCurrentMaxHpEvent;
     public UnityEvent<float> updateActionProgress;
     public UnityEvent<float> updateActionProgressMax;
+    public UnityEvent<float> updateCurrentEffect;
 
 
     private void OnEnable()
@@ -42,6 +44,10 @@ public class PlayerSO : ScriptableObject
         if (dealDamageEvent == null)
         {
             dealDamageEvent = new UnityEvent<float>();
+        }
+        if (updateCurrentEffect == null)
+        {
+            updateCurrentEffect = new UnityEvent<float>();
         }
     }
     public void UpdateCurrentHp(float value)
@@ -75,6 +81,13 @@ public class PlayerSO : ScriptableObject
         currentEnergy += value;
         currentEnergy = Mathf.Clamp(currentEnergy, 0, maxEnergy);
         dealDamageEvent.Invoke(currentEnergy);
+    }
+    public void UpdateCurrentEffect(float value)
+    {
+        currentEffect = value;
+        currentEffect -= Time.deltaTime;
+        updateCurrentEffect.Invoke(currentEffect);
+
     }
 
 }

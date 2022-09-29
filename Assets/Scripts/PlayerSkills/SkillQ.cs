@@ -12,6 +12,7 @@ public class SkillQ : MonoBehaviour
     private bool switched;
     public float damage;
     public float damageOverTime;
+    public float DotTickTimer;
     public float range;
     public float radius;
     public float castTime;
@@ -22,6 +23,9 @@ public class SkillQ : MonoBehaviour
     public float energyGain;
     [HideInInspector]public float coolDownCounter;
     public bool onCooldown;
+
+    public PlayerHardCC HardCCType;
+    public PlayerDebuffs deBuffType;
 
     private CapsuleCollider capsuleCollider;
     private Animator animator;
@@ -44,7 +48,7 @@ public class SkillQ : MonoBehaviour
         {
             if (castCounter==castTime)
             {
-                player.playerControllStates = PlayerControllStates.Slowed;
+                player.playerControllStates = PlayerDebuffs.Snared;
                 StartCoroutine(player.ClearDamageEffects(castTime));
             }
             castCounter -= Time.deltaTime;
@@ -59,7 +63,7 @@ public class SkillQ : MonoBehaviour
         if (player._input.actionCancel && castCounter != castTime && onAction)
         {
             StopCoroutine(player.ClearDamageEffects(castTime));
-            player.playerControllStates = PlayerControllStates.None;
+            player.playerControllStates = PlayerDebuffs.None;
             StartCoroutine(player.ClearDamageEffects(0));
             player._input.onAction = false;
             onAction = false;
@@ -94,7 +98,10 @@ public class SkillQ : MonoBehaviour
             {
                 if (item != player.GetComponent<IDamageable>())
                 {
-                    item.TakeDamage(damage, DamageTypes.Stun, stunTime);
+                    item.TakeDamage(damage, DamageTypes.HardCC, stunTime);
+                    item.GetHardCC(HardCCType, stunTime,0);
+                    //item.GetDeBuffed(PlayerDebuffs.FadingSnared,4,0);
+                    item.DamageOverTime(damageOverTime, 5, 0.5f);
                 }
                 detectedDamageable.Remove(item);
                 player.playerSO.UpdateCurrentEnergy(energyGain);

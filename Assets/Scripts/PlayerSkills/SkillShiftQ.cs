@@ -22,6 +22,9 @@ public class SkillShiftQ : MonoBehaviour
     [HideInInspector] public float coolDownCounter;
     public bool onCooldown;
 
+    public PlayerHardCC HardCCType;
+    public PlayerDebuffs deBuffType;
+
     private CapsuleCollider capsuleCollider;
     private Animator animator;
     private void OnEnable()
@@ -60,7 +63,7 @@ public class SkillShiftQ : MonoBehaviour
         {
             player._input.canMove = true;
             StopCoroutine(player.ClearDamageEffects(castTime));
-            player.playerControllStates = PlayerControllStates.None;
+            player.playerControllStates = PlayerDebuffs.None;
             StartCoroutine(player.ClearDamageEffects(0));
             player._input.onAction = false;
             onAction = false;
@@ -97,7 +100,8 @@ public class SkillShiftQ : MonoBehaviour
             {
                 if (item!=player.GetComponent<IDamageable>())
                 {
-                    item.TakeDamage(damage, DamageTypes.Stun, stunTime);
+                    item.TakeDamage(damage, DamageTypes.HardCC, stunTime);
+                    item.GetHardCC(HardCCType, stunTime,0);
                 }
                 detectedDamageable.Remove(item);
             }

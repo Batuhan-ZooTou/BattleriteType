@@ -54,8 +54,8 @@ public class SkillF : MonoBehaviour
                     if (!item.transform.GetComponent<DummyTarget>().forced)
                     {
                         Vector3 _dir = Vector3.up;
-                        item.transform.GetComponent<DummyTarget>().TakeDamage(damage, DamageTypes.Normal, 0);
-                        item.transform.GetComponent<DummyTarget>().GetKnockBack(_dir.normalized, knockbackPower);
+                        item.transform.GetComponent<IDamageable>().TakeDamage(damage, DamageTypes.Normal, 0);
+                        item.transform.GetComponent<IDamageable>().Knockback(_dir.normalized, knockbackPower);
                     }
                 }
             }
@@ -66,7 +66,7 @@ public class SkillF : MonoBehaviour
         {
             if (castCounter == castTime)
             {
-                player.playerControllStates = PlayerControllStates.Slowed;
+                player.playerControllStates = PlayerDebuffs.Snared;
                 StartCoroutine(player.ClearDamageEffects(castTime));
             }
             indicator.SetActive(true);

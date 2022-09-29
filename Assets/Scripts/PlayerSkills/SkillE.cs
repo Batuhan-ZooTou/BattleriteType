@@ -44,7 +44,7 @@ public class SkillE : MonoBehaviour
         {
             if (castCounter == castTime)
             {
-                player.playerControllStates = PlayerControllStates.Slowed;
+                player.playerControllStates = PlayerDebuffs.Snared;
                 StartCoroutine(player.ClearDamageEffects(castTime));
             }
             castCounter -= Time.deltaTime;
@@ -56,7 +56,7 @@ public class SkillE : MonoBehaviour
         if (player._input.actionCancel && castCounter != castTime && onAction)
         {
             StopCoroutine(player.ClearDamageEffects(castTime));
-            player.playerControllStates = PlayerControllStates.None;
+            player.playerControllStates = PlayerDebuffs.None;
             player._input.onAction = false;
             onAction = false;
             castCounter = castTime;
@@ -106,9 +106,9 @@ public class SkillE : MonoBehaviour
         RaycastHit[] hits = Physics.BoxCastAll(transform.position, new Vector3(colliderAreaHalf, colliderAreaHalf, 0.25f), transform.forward, transform.rotation, colliderAreaHalf, targetLayer, QueryTriggerInteraction.Ignore);
         foreach (RaycastHit item in hits)
         {
-            if (item.transform.GetComponent<DummyTarget>()!=null && forced)
+            if (item.transform.GetComponent<IDamageable>()!=null && forced)
             {
-                item.transform.GetComponent<DummyTarget>().GetKnockBack(_dir,damage);
+                item.transform.GetComponent<IDamageable>().Knockback(_dir,damage);
                 targer = true;
                 if (targer && forced)
                 {

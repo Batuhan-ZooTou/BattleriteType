@@ -33,7 +33,7 @@ namespace StarterAssets
 		}
 		public void OnSkillRMB()
         {
-            if (!player.skillRMB.onAction&&!delayAfterCancel&& player.playerControllStates != PlayerControllStates.Stunned)
+            if (!player.skillRMB.onAction&&!delayAfterCancel&& player.playerControllStates != PlayerDebuffs.Stunned)
             {
 				if (!player.skillRMB.onCooldown)
 				{
@@ -44,7 +44,7 @@ namespace StarterAssets
 		}
 		public void OnSkillLMB()
         {
-			if (!player.skillLMB.onAction && !delayAfterCancel && player.playerControllStates != PlayerControllStates.Stunned)
+			if (!player.skillLMB.onAction && !delayAfterCancel && player.playerControllStates != PlayerDebuffs.Stunned)
 			{
                 if (!player.skillLMB.onCooldown)
                 {
@@ -65,7 +65,7 @@ namespace StarterAssets
         {
             if (holdinShift && player.skillShiftQ.energyRequirment<=player.playerSO.currentEnergy)
             {
-				if (!player.skillShiftQ.onAction && !delayAfterCancel && player.playerControllStates != PlayerControllStates.Stunned)
+				if (!player.skillShiftQ.onAction && !delayAfterCancel && player.playerControllStates != PlayerDebuffs.Stunned)
 				{
 					if (!player.skillShiftQ.onCooldown)
 					{
@@ -77,7 +77,7 @@ namespace StarterAssets
 			}
             else
             {
-				if (!player.skillQ.onAction && !delayAfterCancel && player.playerControllStates != PlayerControllStates.Stunned)
+				if (!player.skillQ.onAction && !delayAfterCancel && player.playerControllStates != PlayerDebuffs.Stunned)
 				{
 					if (!player.skillQ.onCooldown)
 					{
@@ -93,7 +93,7 @@ namespace StarterAssets
 		{
             if (holdinShift && player.skillShiftSpace.energyRequirment <= player.playerSO.currentEnergy)
             {
-				if (!player.skillShiftSpace.onAction && !delayAfterCancel && player.playerControllStates != PlayerControllStates.Stunned)
+				if (!player.skillShiftSpace.onAction && !delayAfterCancel && player.playerControllStates != PlayerDebuffs.Stunned)
 				{
 					if (!player.skillShiftSpace.onCooldown)
 					{
@@ -104,7 +104,7 @@ namespace StarterAssets
 			}
             else
             {
-				if (!player.skillSpace.onAction && !delayAfterCancel && player.playerControllStates != PlayerControllStates.Stunned)
+				if (!player.skillSpace.onAction && !delayAfterCancel && player.playerControllStates != PlayerDebuffs.Stunned)
 				{
 					if (!player.skillSpace.onCooldown)
 					{
@@ -117,7 +117,7 @@ namespace StarterAssets
 		}
 		public void OnSkillF()
 		{
-			if (!player.skillF.onAction && !delayAfterCancel && player.playerControllStates != PlayerControllStates.Stunned && player.skillF.energyRequirment <= player.playerSO.currentEnergy)
+			if (!player.skillF.onAction && !delayAfterCancel && player.playerControllStates != PlayerDebuffs.Stunned && player.skillF.energyRequirment <= player.playerSO.currentEnergy)
 			{
 				if (!player.skillF.onCooldown)
 				{
@@ -128,7 +128,7 @@ namespace StarterAssets
 		}
 		public void OnSkillR()
 		{
-			if (!player.skillR.onAction && !delayAfterCancel && player.playerControllStates != PlayerControllStates.Stunned && player.skillR.energyRequirment <= player.playerSO.currentEnergy)
+			if (!player.skillR.onAction && !delayAfterCancel && player.playerControllStates != PlayerDebuffs.Stunned && player.skillR.energyRequirment <= player.playerSO.currentEnergy)
 			{
 				if (!player.skillSpace.onCooldown)
 				{
@@ -139,7 +139,7 @@ namespace StarterAssets
 		}
 		public void OnSkillE()
 		{
-			if (!player.skillE.onAction && !delayAfterCancel && player.playerControllStates != PlayerControllStates.Stunned)
+			if (!player.skillE.onAction && !delayAfterCancel && player.playerControllStates != PlayerDebuffs.Stunned)
 			{
 				if (!player.skillE.onCooldown)
 				{

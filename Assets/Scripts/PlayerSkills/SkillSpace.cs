@@ -49,8 +49,8 @@ public class SkillSpace : MonoBehaviour
                     {
                         Vector3 _dir = item.transform.position - transform.position;
                         _dir.y = 0.01f;
-                        item.transform.GetComponent<DummyTarget>().TakeDamage(damage,DamageTypes.Normal,0);
-                        item.transform.GetComponent<DummyTarget>().GetKnockBack(_dir.normalized, knockbackPower);
+                        item.transform.GetComponent<IDamageable>().TakeDamage(damage,DamageTypes.Normal,0);
+                        item.transform.GetComponent<IDamageable>().Knockback(_dir.normalized, knockbackPower);
                         player.playerSO.UpdateCurrentEnergy(energyGain);
                     }
                 }
@@ -62,7 +62,7 @@ public class SkillSpace : MonoBehaviour
         {
             if (castCounter == castTime)
             {
-                player.playerControllStates = PlayerControllStates.Slowed;
+                player.playerControllStates = PlayerDebuffs.Snared;
                 StartCoroutine(player.ClearDamageEffects(castTime));
             }
             castCounter -= Time.deltaTime;
@@ -78,7 +78,7 @@ public class SkillSpace : MonoBehaviour
         if (player._input.actionCancel && castCounter != castTime && onAction)
         {
             StopCoroutine(player.ClearDamageEffects(castTime));
-            player.playerControllStates = PlayerControllStates.None;
+            player.playerControllStates = PlayerDebuffs.None;
             player._input.onAction = false;
             onAction = false;
             indicator.SetActive(false);
