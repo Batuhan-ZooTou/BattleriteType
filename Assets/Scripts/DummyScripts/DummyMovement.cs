@@ -7,6 +7,8 @@ public class DummyMovement : MonoBehaviour
     public bool canMove=true;
     public float defaultSpeed;
     public float moveSpeed;
+    public float moveSpeedWhileOnAction;
+    public float changedMoveSpeedWhileOnAction {  get; private set; }
     public float _changedMoveSpeed;
     public float speedChangeRate;
     public float deAcceleration;
@@ -44,6 +46,7 @@ public class DummyMovement : MonoBehaviour
     private void Awake()
     {
         NextPosition();
+        changedMoveSpeedWhileOnAction = moveSpeedWhileOnAction;
     }
 
     void Update()
@@ -93,12 +96,11 @@ public class DummyMovement : MonoBehaviour
         if (Vector3.Distance(transform.position, nextPos) > 1)
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            if (dummyTarget.onAction)
-            {
-                moveSpeedChanged = true;
-                _changedMoveSpeed = defaultSpeed * (80 / 100);
-            }
             float targetSpeed = moveSpeedChanged ? _changedMoveSpeed : defaultSpeed;
+            if (moveSpeedChanged)
+            {
+                targetSpeed = dummyTarget.onAction ? moveSpeedWhileOnAction : _changedMoveSpeed;
+            }
 
             // if there is no input, set the target speed to 0
             if (!canMove) targetSpeed = 0.0f;
@@ -108,9 +110,9 @@ public class DummyMovement : MonoBehaviour
             // accelerate or decelerate to target speed
             if (moveSpeed < targetSpeed - speedOffset)
             {
-                if (moveSpeed < 0.5f)
+                if (moveSpeed < 0.2f)
                 {
-                    moveSpeed = 0.5f;
+                    moveSpeed = 0.2f;
                 }
                 moveSpeed += speedChangeRate * Time.deltaTime;
                 moveSpeed = Mathf.Clamp(moveSpeed, 0, targetSpeed);
@@ -173,19 +175,20 @@ public class DummyMovement : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(new Vector3(dir.x,0,dir.z), Vector3.up), turnRate);
         }
     }
+    //Change Movement values
+    #region
     public void ReduceMovementSpeedByPercentage(float percentage)
     {
-        if (!moveSpeedChanged)
+         moveSpeedChanged = true;
+        _changedMoveSpeed = defaultSpeed-(defaultSpeed * (percentage / 100));
+    }
+    public void ReduceMovementSpeedWhileOnAction()
+    {
+        moveSpeedChanged = true;
+        float reducedSpeed = _changedMoveSpeed - moveSpeedWhileOnAction;
+        if (reducedSpeed < 0)
         {
-            moveSpeedChanged = true;
-            _changedMoveSpeed = defaultSpeed * (percentage / 100);
-        }
-        else
-        {
-            if (percentage/100<_changedMoveSpeed/defaultSpeed)
-            {
-                _changedMoveSpeed = defaultSpeed * (percentage / 100);
-            }
+            moveSpeedWhileOnAction = _changedMoveSpeed;
         }
     }
     public void ReduceMovementSpeedToZero(bool _canMove)
@@ -200,22 +203,30 @@ public class DummyMovement : MonoBehaviour
         {
             //fading snare
             moveSpeedChanged = true;
+            _changedMoveSpeed = 0;
         }
+
     }
-    public void IncreaseMovementSpeedByPercentage(float percentage)
+    public void ClearMovementSlow()
     {
-        if (percentage/100 == _changedMoveSpeed / defaultSpeed)
+        if (!dummyTarget.onAction)
         {
             moveSpeedChanged = false;
             _changedMoveSpeed = defaultSpeed;
         }
     }
+    public void IncreaseMovementSpeedByPercentage(float percentage)
+    {
+        moveSpeedChanged = true;
+        _changedMoveSpeed +=(defaultSpeed * (percentage / 100));
+    }
     public void IncreaseMovementSpeedPerFrame(float time)
     {
         //fading snare
         _changedMoveSpeed += Time.deltaTime * (defaultSpeed / time);
-        _changedMoveSpeed = Mathf.Clamp(_changedMoveSpeed, 0, moveSpeed);
-    }   
+        _changedMoveSpeed = Mathf.Clamp(_changedMoveSpeed, 0, defaultSpeed);
+    }
+    #endregion
     private void OnCollisionEnter(Collision collision)
     {
         if (dummyTarget.forced && collision.gameObject.CompareTag("Wall"))

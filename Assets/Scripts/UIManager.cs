@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Slider currentMaxHp;
     [SerializeField] private Slider dummyCurrentHp;
     [SerializeField] private Slider dummyCurrentMaxHp;
+    [SerializeField] private Slider dummyCurrentShield;
     [SerializeField] private Slider dummyCurrentEffect;
     [SerializeField] private Slider currentEnergy;
     [SerializeField] private TextMeshProUGUI currentEffectName;
@@ -18,6 +19,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] DummyTarget dummyTarget;
     [SerializeField] private Slider currentActionProgress;
     [SerializeField] private TextMeshProUGUI dummyHp;
+    [SerializeField] private TextMeshProUGUI dummyCurrentEffectName;
 
 
     void Start()
@@ -31,6 +33,8 @@ public class UIManager : MonoBehaviour
         ChangeDummyEffectValue(0);
         ChangeDummyEffectMaxValue(0);
         ChangeCurrentEnergyValue(0);
+        ChangeDummyEffectName(dummyTarget.currentEffectName);
+        ChangeDummyCurrentShieldValue(0);
     }
 
     private void OnEnable()
@@ -45,6 +49,8 @@ public class UIManager : MonoBehaviour
         dummyTarget.updateCurrentMaxHpEvent.AddListener(ChangeCurrentDummyMaxHpValue);
         dummyTarget.updateEffectEvent.AddListener(ChangeDummyEffectValue);
         dummyTarget.updateEffectMaxEvent.AddListener(ChangeDummyEffectMaxValue);
+        dummyTarget.updateEffectNameEvent.AddListener(ChangeDummyEffectName);
+        dummyTarget.updateCurrentShieldEvent.AddListener(ChangeDummyCurrentShieldValue);
     }
     private void OnDisable()
     {
@@ -58,6 +64,8 @@ public class UIManager : MonoBehaviour
         dummyTarget.updateCurrentMaxHpEvent.RemoveListener(ChangeCurrentDummyMaxHpValue);
         dummyTarget.updateEffectEvent.RemoveListener(ChangeDummyEffectValue);
         dummyTarget.updateEffectMaxEvent.RemoveListener(ChangeDummyEffectMaxValue);
+        dummyTarget.updateEffectNameEvent.RemoveListener(ChangeDummyEffectName);
+        dummyTarget.updateCurrentShieldEvent.RemoveListener(ChangeDummyCurrentShieldValue);
     }
     public void ChangeCurrentHpValue(float value)
     {
@@ -77,6 +85,10 @@ public class UIManager : MonoBehaviour
     {
         dummyCurrentMaxHp.value = value;
     }
+    public void ChangeDummyCurrentShieldValue(float value)
+    {
+        dummyCurrentShield.value = value;
+    }
     public void ChangeActionProgressValue(float value)
     {
         currentActionProgress.value = value;
@@ -92,6 +104,10 @@ public class UIManager : MonoBehaviour
     public void ChangeDummyEffectMaxValue(float value)
     {
         dummyCurrentEffect.maxValue = value;
+    }
+    public void ChangeDummyEffectName(string value)
+    {
+        dummyCurrentEffectName.text = value;
     }
     public void ChangeCurrentEnergyValue(float value)
     {

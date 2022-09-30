@@ -45,11 +45,12 @@ public class SkillSpace : MonoBehaviour
                 RaycastHit[] hits = Physics.SphereCastAll(transform.position, radius, transform.forward, radius, targetLayer, QueryTriggerInteraction.Ignore);
                 foreach (RaycastHit item in hits)
                 {
-                    if (item.transform.GetComponent<DummyTarget>() != null)
+                    if (item.transform.GetComponent<IDamageable>() != null)
                     {
                         Vector3 _dir = item.transform.position - transform.position;
                         _dir.y = 0.01f;
                         item.transform.GetComponent<IDamageable>().TakeDamage(damage,DamageTypes.Normal,0);
+                        //item.transform.GetComponent<IDamageable>().GetDeBuffed(PlayerDebuffs.Snared,6,damage);
                         item.transform.GetComponent<IDamageable>().Knockback(_dir.normalized, knockbackPower);
                         player.playerSO.UpdateCurrentEnergy(energyGain);
                     }

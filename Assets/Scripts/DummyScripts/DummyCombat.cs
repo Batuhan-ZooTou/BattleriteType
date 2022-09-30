@@ -15,6 +15,7 @@ public class DummyCombat : MonoBehaviour, IDamageable
     public float atkActionTime;
     private float atkSpdCounter;
     ObjectPooler objectPooler;
+    public bool isSilenced;
     //Enums for status
     public PlayerHardCC playerHardCC;
     public PlayerDebuffs deBuffed;
@@ -38,7 +39,10 @@ public class DummyCombat : MonoBehaviour, IDamageable
     {
         if (playerHardCC==PlayerHardCC.Normal || playerHardCC == PlayerHardCC.None)
         {
-            Shot();
+            if (!isSilenced)
+            {
+                Shot();
+            }
         }
         ClearHardCC(hardCCtimer);
         ClearDeBuff();
@@ -57,7 +61,8 @@ public class DummyCombat : MonoBehaviour, IDamageable
                 dummyTarget.currentEffect = debuffTime;
                 hardCCtimer = debuffTime;
                 dummyTarget.UpdateEffectProgressMax(debuffTime);
-                dummyTarget.DecreaseHp(amount);
+                //dummyTarget.DecreaseHp(amount);
+                dummyTarget.UpdateCurrentShield(amount);
                 dummyTarget.ClampHpValues();
                 break;
             case DamageTypes.DeBuff:
@@ -95,6 +100,7 @@ public class DummyCombat : MonoBehaviour, IDamageable
     {
         playerHardCC = type;
         dummyTarget.currentEffectName = type.ToString();
+        dummyTarget.UpdateEffectName(type.ToString());
         switch (playerHardCC)
         {
             case PlayerHardCC.None:
@@ -128,28 +134,57 @@ public class DummyCombat : MonoBehaviour, IDamageable
     {
         deBuffed = type;
         dummyTarget.currentEffectName = type.ToString();
-        deBuffSlots.Add(new DeBuffSlot(type, DebuffTime, DebuffTime, amount));
+        dummyTarget.UpdateEffectName(type.ToString());
+        DeBuffSlot recentDebuff = new DeBuffSlot(type, DebuffTime, DebuffTime, amount);
+        deBuffSlots.Add(recentDebuff);
         switch (deBuffed)
         {
             case PlayerDebuffs.None:
                 break;
             case PlayerDebuffs.Normal:
                 break;
-            case PlayerDebuffs.Stunned:
-                break;
             case PlayerDebuffs.Silenced:
+                isSilenced = true;
                 break;
             case PlayerDebuffs.Snared:
-                dummyTarget.dummyMovement.ReduceMovementSpeedByPercentage(amount);
-                break;
-            case PlayerDebuffs.DamagedOvertime:
-                //StartCoroutine(Dot(DebuffTime));
+                for (int i = 0; i < deBuffSlots.Count; i++)
+                {
+                    if (deBuffSlots[i].deBuffType == PlayerDebuffs.Snared)
+                    {
+                        if (deBuffSlots[i] != recentDebuff)
+                        {
+                            if (deBuffSlots[i].amount < recentDebuff.amount)
+                            {
+                                if (deBuffSlots[i].counter > recentDebuff.time)
+                                {
+                                    recentDebuff.counter = deBuffSlots[i].counter;
+                                }
+                                deBuffSlots.Remove(deBuffSlots[i]);
+                                dummyTarget.dummyMovement.ReduceMovementSpeedByPercentage(amount);
+                            }
+                            else
+                            {
+                                if (deBuffSlots[i].counter < recentDebuff.time)
+                                {
+                                    deBuffSlots[i].counter = recentDebuff.time;
+                                }
+                                deBuffSlots.Remove(recentDebuff);
+                            }
+                        }
+                        else
+                        {
+                            dummyTarget.dummyMovement.ReduceMovementSpeedByPercentage(amount);
+                        }
+                    }
+
+                }
                 break;
             case PlayerDebuffs.Weakened:
                 break;
             case PlayerDebuffs.Blinded:
                 break;
             case PlayerDebuffs.Rooted:
+                dummyTarget.dummyMovement.canMove = true;
                 break;
             case PlayerDebuffs.FadingSnared:
                 dummyTarget.dummyMovement.ReduceMovementSpeedToZero(true);
@@ -194,17 +229,31 @@ public class DummyCombat : MonoBehaviour, IDamageable
             for (int i = 0; i < deBuffSlots.Count; i++)
             {
                 deBuffSlots[i].counter -= Time.deltaTime;
-                if (deBuffSlots[i].deBuffType == PlayerDebuffs.FadingSnared)
+                if (deBuffSlots[i].deBuffType == PlayerDebuffs.FadingSnared )
                 {
                     dummyTarget.dummyMovement.IncreaseMovementSpeedPerFrame(deBuffSlots[i].time);
+                }
+                if (deBuffSlots[i].deBuffType == PlayerDebuffs.Snared)
+                {
+                    dummyTarget.dummyMovement.moveSpeedChanged = true;
+
                 }
                 if (deBuffSlots[i].counter <= 0)
                 {
                     Debug.Log("Cleared debuff");
                     if (deBuffSlots[i].deBuffType==PlayerDebuffs.Snared)
                     {
-                        dummyTarget.dummyMovement.IncreaseMovementSpeedByPercentage(deBuffSlots[i].amount);
+                        dummyTarget.dummyMovement.ClearMovementSlow();
                     }
+                    else if (deBuffSlots[i].deBuffType == PlayerDebuffs.Silenced)
+                    {
+                        isSilenced = false;
+                    }
+                    else if (deBuffSlots[i].deBuffType == PlayerDebuffs.Rooted)
+                    {
+                        dummyTarget.dummyMovement.canMove = true;
+                    }
+                    dummyTarget.UpdateEffectName("");
                     deBuffSlots.Remove(deBuffSlots[i]);
                 }
             }
@@ -241,7 +290,7 @@ public class DummyCombat : MonoBehaviour, IDamageable
                 break;
             case PlayerHardCC.Normal:
                 hardCCcounter = 0; 
-                
+                dummyTarget.UpdateEffectName("");
                 break;
             case PlayerHardCC.Stunned:
                 hardCCcounter += Time.deltaTime;
@@ -294,6 +343,7 @@ public class DummyCombat : MonoBehaviour, IDamageable
         {
             atkSpdCounter = 0;
             dummyTarget.onAction = false;
+            dummyTarget.dummyMovement.moveSpeedWhileOnAction = dummyTarget.dummyMovement.changedMoveSpeedWhileOnAction;
             dummyTarget.dummyMovement.moveSpeedChanged = false;
             GameObject projectile = objectPooler.SpawnFromPool("DummyProjectile", transform.position, transform.rotation);
             ProjectileBehavior projectileBehavior = projectile.GetComponent<ProjectileBehavior>();
