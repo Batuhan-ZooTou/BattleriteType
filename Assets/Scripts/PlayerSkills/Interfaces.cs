@@ -88,5 +88,6 @@ public enum PlayerBuffs
     LifeSteal,
     AtkBoost,
     DamageReduction,
-    Healing
+    Healing,
+    Shield
 }

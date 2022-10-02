@@ -4235,7 +4235,7 @@ MonoBehaviour:
   energyGain: 15
   coolDownCounter: 0
   onCooldown: 0
-  HardCCType: 2
+  HardCCType: 3
   deBuffType: 5
 --- !u!114 &1561170929
 MonoBehaviour:

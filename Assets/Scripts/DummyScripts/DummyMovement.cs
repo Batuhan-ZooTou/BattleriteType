@@ -92,7 +92,10 @@ public class DummyMovement : MonoBehaviour
    
     public void Move()
     {
-        dir = (nextPos - transform.position).normalized;
+        if (dummyTarget.dummyCombat.playerHardCC!=PlayerHardCC.Paniced)
+        {
+            dir = (nextPos - transform.position).normalized;
+        }
         if (Vector3.Distance(transform.position, nextPos) > 1)
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed

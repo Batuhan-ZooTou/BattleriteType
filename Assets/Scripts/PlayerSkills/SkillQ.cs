@@ -100,8 +100,8 @@ public class SkillQ : MonoBehaviour
                 {
                     item.TakeDamage(damage, DamageTypes.HardCC, stunTime);
                     item.GetHardCC(HardCCType, stunTime,0);
-                    //item.GetDeBuffed(PlayerDebuffs.FadingSnared,4,damage);
-                    //item.DamageOverTime(damageOverTime, 5, 0.5f);
+                    //item.GetDeBuffed(PlayerDebuffs.UsingSkill,4,damage);
+                    item.DamageOverTime(damageOverTime, 5, 0.5f);
                 }
                 detectedDamageable.Remove(item);
                 player.playerSO.UpdateCurrentEnergy(energyGain);

@@ -49,6 +49,15 @@ public class DummyCombat : MonoBehaviour, IDamageable
     }
     public void TakeDamage(float amount, DamageTypes damageTypes, float debuffTime)
     {
+        if (playerHardCC==PlayerHardCC.Incapacitated)
+        {
+            if (damageTypes!=DamageTypes.HardCC)
+            {
+                playerHardCC = PlayerHardCC.Normal;
+                dummyTarget.dummyMovement.moveSpeed = dummyTarget.dummyMovement.defaultSpeed;
+                dummyTarget.dummyMovement.canMove = true;
+            }
+        }
         switch (damageTypes)
         {
             case DamageTypes.None:
@@ -61,8 +70,7 @@ public class DummyCombat : MonoBehaviour, IDamageable
                 dummyTarget.currentEffect = debuffTime;
                 hardCCtimer = debuffTime;
                 dummyTarget.UpdateEffectProgressMax(debuffTime);
-                //dummyTarget.DecreaseHp(amount);
-                dummyTarget.UpdateCurrentShield(amount);
+                dummyTarget.DecreaseHp(amount);
                 dummyTarget.ClampHpValues();
                 break;
             case DamageTypes.DeBuff:
@@ -120,9 +128,15 @@ public class DummyCombat : MonoBehaviour, IDamageable
                 break;
             case PlayerHardCC.Paniced:
                 hardCCcounter = 0;
+                atkSpdCounter = 0;
+                dummyTarget.onAction = false;
+                dummyTarget.dummyMovement.moveSpeedWhileOnAction = dummyTarget.dummyMovement.changedMoveSpeedWhileOnAction;
+                dummyTarget.dummyMovement.moveSpeedChanged = false;
+                dummyTarget.dummyMovement.dir= -(dummyTarget.player.transform.position - transform.position).normalized;
                 break;
             case PlayerHardCC.Petrified:
                 dummyTarget.dummyMovement.ReduceMovementSpeedToZero(false);
+                dummyTarget.UpdateCurrentShield(amount);
                 hardCCcounter = 0;
                 break;
             default:
@@ -201,7 +215,9 @@ public class DummyCombat : MonoBehaviour, IDamageable
     {
         buffed = type;
         dummyTarget.currentEffectName = type.ToString();
-        buffSlots.Add(new BuffSlot(type, DebuffTime, DebuffTime, amount));
+        BuffSlot recentbuff = new BuffSlot(type, DebuffTime, DebuffTime, amount);
+        buffSlots.Add(recentbuff);
+
         switch (buffed)
         {
             case PlayerBuffs.None:
@@ -217,6 +233,27 @@ public class DummyCombat : MonoBehaviour, IDamageable
             case PlayerBuffs.DamageReduction:
                 break;
             case PlayerBuffs.Healing:
+                break;
+            case PlayerBuffs.Shield:
+                dummyTarget.UpdateCurrentShield(amount);
+                for (int i = 0; i < deBuffSlots.Count; i++)
+                {
+                    if (buffSlots[i].buffType == PlayerBuffs.Shield)
+                    {
+                        if (buffSlots[i] != recentbuff)
+                        {
+                            if (buffSlots[i].counter <= recentbuff.time)
+                            {
+                                buffSlots.Remove(buffSlots[i]);
+                            }
+                            else
+                            {
+                                recentbuff.counter = buffSlots[i].counter;
+                                buffSlots.Remove(buffSlots[i]);
+                            }
+                        }
+                    }
+                }
                 break;
             default:
                 break;
@@ -238,6 +275,15 @@ public class DummyCombat : MonoBehaviour, IDamageable
                     dummyTarget.dummyMovement.moveSpeedChanged = true;
 
                 }
+                if (deBuffSlots[i].deBuffType == PlayerDebuffs.UsingSkill)
+                {
+                    if (dummyTarget.onAction)
+                    {
+                        TakeDamage(0, DamageTypes.HardCC, deBuffSlots[i].time);
+                        GetHardCC(PlayerHardCC.Paniced, deBuffSlots[i].time, 0);
+                        deBuffSlots[i].counter = 0;
+                    }
+                }
                 if (deBuffSlots[i].counter <= 0)
                 {
                     Debug.Log("Cleared debuff");
@@ -253,7 +299,10 @@ public class DummyCombat : MonoBehaviour, IDamageable
                     {
                         dummyTarget.dummyMovement.canMove = true;
                     }
-                    dummyTarget.UpdateEffectName("");
+                    if (deBuffSlots[i].deBuffType.ToString()== dummyTarget.currentEffectName)
+                    {
+                        dummyTarget.UpdateEffectName("");
+                    }
                     deBuffSlots.Remove(deBuffSlots[i]);
                 }
             }
@@ -273,6 +322,10 @@ public class DummyCombat : MonoBehaviour, IDamageable
                 if (buffSlots[i].counter <= 0)
                 {
                     Debug.Log("Cleared buff");
+                    if (buffSlots[i].buffType == PlayerBuffs.Shield)
+                    {
+                        dummyTarget.UpdateCurrentShield(0);
+                    }
                     buffSlots.Remove(buffSlots[i]);
                 }
             }
