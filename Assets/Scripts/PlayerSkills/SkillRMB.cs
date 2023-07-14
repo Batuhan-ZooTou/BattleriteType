@@ -43,6 +43,7 @@ public class SkillRMB : MonoBehaviour
         if (onAction && castCounter != 0 && !onCooldown)
         {
             skillIndicator.SetActive(true);
+            player._animator.SetTrigger("CastStart");
             if (castCounter == castTime)
             {
                 player.playerControllStates = PlayerDebuffs.Snared;
@@ -57,6 +58,7 @@ public class SkillRMB : MonoBehaviour
         if (player._input.actionCancel && onAction && castCounter != castTime)
         {
             skillIndicator.SetActive(false);
+            player._animator.SetTrigger("Cancel");
             StopCoroutine(player.ClearDamageEffects(castTime));
             player.playerControllStates = PlayerDebuffs.None;
             StartCoroutine(player.ClearDamageEffects(0));
@@ -77,6 +79,7 @@ public class SkillRMB : MonoBehaviour
         else if (castCounter == 0)
         {
             onCooldown = true;
+            player._animator.SetTrigger("Casted");
             player.UpdateActionProgress(delayAfterShots * extraShots);
             if (delayAfterShotsCounter == delayAfterShots && loopCount>=0)
             {
@@ -91,6 +94,7 @@ public class SkillRMB : MonoBehaviour
             }
             else if(loopCount==0)
             {
+                player._animator.SetTrigger("Cancel");
                 delayAfterShotsCounter = delayAfterShots;
                 loopCount = extraShots;
                 castCounter = castTime;

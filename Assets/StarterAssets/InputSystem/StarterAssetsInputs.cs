@@ -63,6 +63,7 @@ namespace StarterAssets
 		}
 		public void	OnSkillQ()
         {
+			//player.abilitySlots[0].ChangeAbilityState(AbilityState.Casting);
             if (holdinShift && player.skillShiftQ.energyRequirment<=player.playerSO.currentEnergy)
             {
 				if (!player.skillShiftQ.onAction && !delayAfterCancel && player.playerControllStates != PlayerDebuffs.Stunned)

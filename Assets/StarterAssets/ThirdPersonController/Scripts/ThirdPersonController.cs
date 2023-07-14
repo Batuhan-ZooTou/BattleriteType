@@ -45,6 +45,7 @@ namespace StarterAssets
         public bool speedChanged=false;
         public PlayerSO playerSO;
 
+        public List<AbilityHolder> abilitySlots = new List<AbilityHolder>();
 
         public SkillQ skillQ;
         public SkillRMB skillRMB;
@@ -72,7 +73,7 @@ namespace StarterAssets
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
         private PlayerInput _playerInput;
 #endif
-        private Animator _animator;
+        [SerializeField]public Animator _animator;
         [HideInInspector] public Collider playerCollider;
         [HideInInspector] public Rigidbody rb;
         [HideInInspector] public StarterAssetsInputs _input;
@@ -93,6 +94,10 @@ namespace StarterAssets
             }
         }
 
+        private void Awake()
+        {
+            abilitySlots[0].hero = this;
+        }
         private void Start()
         {
             _hasAnimator = TryGetComponent(out _animator);
